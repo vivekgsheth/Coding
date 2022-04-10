@@ -1,45 +1,42 @@
-'''
-# Sample code to perform I/O:
+# Create a graph 
+graph = {}
+costs = {}
+parents = {}
+processed = []
 
-name = input()                  # Reading input from STDIN
-print('Hi, %s.' % name)         # Writing output to STDOUT
+def find_lowest_cost_node(costs):
+    lowest_cost = float("inf")
+    lowest_code_node = None
 
-# Warning: Printing unwanted or ill-formatted data to output will cause the test cases to fail
-'''
+    global processed
 
-# Write your code here
-from collections import defaultdict
-import queue
+    for node in costs:
+        cost = costs[node]
+        if cost < lowest_cost and node not in processed:
+            lowest_cost = cost
+            lowest_code_node = node
 
-t = int(input())
-while t:
-    graph = defaultdict(list)
-    t-=1
-    n = int(input())
-    for u in range(0,n):
-        ip = list(map(int ,input().split()))
-        for v in range(0,len(ip)):
-            if ip[v] != 0:
-                graph[u].append((v,ip[v]))
-    print(graph)
-    q = queue.PriorityQueue()
-    q.put((0,0))
-    max_val = 99999
-    dist = [max_val] * n
-    dist[0] = 0
+    return lowest_code_node
 
-    while not q.empty():
-        curr = q.get()
-        print(curr)
-        curr_node  = curr[1]
-        curr_dist = curr[0]
-        for child in graph[curr_node]:
-            print(child)
-            child_node = child[0]
-            edge_dist = child[1]
-            if curr_dist+edge_dist < dist[child_node]:
-                dist[child_node] = curr_dist+edge_dist
-                q.put((dist[child_node],child_node))
-    print(dist)
+node = find_lowest_cost_node(costs)
+while node is not None:
+    cost = costs[node]
+    neighbors = graph[node]
 
+    for n in neighbors.keys():
+        new_cost = cost + neighbors[n]
+        if costs[n] > new_cost:
+            costs[n] = new_cost
+            parents[n] = node
 
+    processed.append(node)
+    node = find_lowest_cost_node(costs)
+
+# Printing the path
+path = ["F"]
+node = "F"
+while node is not None:
+    new_node = parents[node]
+    path.append(new_node)
+    
+    node = new_node
